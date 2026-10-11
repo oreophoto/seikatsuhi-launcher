@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- stock-tools の icon.svg と同じ地色・線幅・色。2人のあいだの精算を ⇄ で表す -->
+  <rect width="512" height="512" fill="#0b0f14"/>
+  <g fill="none" stroke-width="34" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M140 196H372M316 140l56 56-56 56" stroke="#5b8def"/>
+    <path d="M372 316H140M196 260l-56 56 56 56" stroke="#e6eaf0"/>
+  </g>
+</svg>

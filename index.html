@@ -10,7 +10,6 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
-<link rel="manifest" href="manifest.webmanifest">
 <style>
   html, body { margin: 0; min-height: 100%; background: #101114; color: #f2f3f7; }
   body { font: 14px/1.7 -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif; }
@@ -26,7 +25,21 @@
   // 生活費精算アプリ（Google Apps Script）の入り口。ホーム画面のアイコンを出すためだけのページ。
   // GAS のウェブアプリには apple-touch-icon を付けられないので、ここに付けてアプリへ移動する。
   var APP_URL = 'https://script.google.com/macros/s/AKfycbxo7AdUwiPbSQY1H5f4MBC9edyugFW79JFQ5jqV-SjO3swQYZZOiYOtesl9pV4hyZUq/exec';
-  if (location.hash !== '#add') location.replace(APP_URL);
+  // iPhone はホーム画面に追加するとき、このURLを見えないところで読み込み直してアイコンを探す。
+  // そこですぐ移動するとアプリ側のページを読んでしまい、アイコンが見つからない（タイトルの頭文字になる）。
+  // そのため、画面に表示されているときだけ、読み込みが終わってから移動する。
+  // #add は下でアドレスから消すので、最初に覚えておく
+  var adding = location.hash === '#add';
+  var moving = false;
+  function openApp() {
+    if (adding || moving || document.visibilityState !== 'visible') return;
+    moving = true;
+    setTimeout(function () { location.replace(APP_URL); }, 300);
+  }
+  window.addEventListener('load', openApp);
+  document.addEventListener('visibilitychange', function () {
+    if (document.readyState === 'complete') openApp();
+  });
 </script>
 </head>
 <body>
@@ -44,7 +57,7 @@
 </main>
 <script>
   document.getElementById('link').href = APP_URL;
-  if (location.hash === '#add') {
+  if (adding) {
     // ホーム画面には #add のないURLを登録させる（アイコンから開いたときはすぐアプリへ移動する）
     history.replaceState(null, '', location.pathname);
     document.getElementById('add').hidden = false;
